@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tetris web con js</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container">
+        
+        <div class="side-panel">
+            <div class="panel glass">
+                <h2>HOLD</h2>
+                <div class="canvas-container">
+                    <canvas id="hold-piece-canvas" width="120" height="120"></canvas>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button id="musicBtn" class="glass btn">Music</button>
+                <button id="pauseBtn" class="glass btn">Pause</button>
+            </div>
+        </div>
+        
+        <div class="board-container glass">
+            <canvas id="board"></canvas>
+            <div class="grid-overlay"></div>
+        </div>
+        
+        <div class="side-panel">
+            <div class="panel glass">
+                <div class="stat">
+                    <span>Score</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="stat">
+                    <span>Lines</span>
+                    <span id="lines">0</span>
+                </div>
+            </div>
+            
+            <div class="panel glass">
+                <h2>NEXT</h2>
+                <div class="canvas-container">
+                    <canvas id="next-piece-canvas" width="120" height="120"></canvas>
+                </div>
+            </div>
+
+            <div class="panel glass">
+                <h2>Controls</h2>
+                <div class="controls-list">
+                    <div class="control-item">
+                        <span class="key">← →</span>
+                        <span class="action">Move</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key">↓</span>
+                        <span class="action">Soft drop</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key">↑ / Z</span>
+                        <span class="action">Rotate</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key">Space</span>
+                        <span class="action">Hard drop</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key">C</span>
+                        <span class="action">Hold</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key">P</span>
+                        <span class="action">Pause</span>
+                    </div>
+                    <div class="control-item">
+                        <span class="key">M</span>
+                        <span class="action">Music</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="game-over-modal">
+        <div class="modal-content">
+            <h3>Game Over</h3>
+            <p>Tu puntaje final es: <span id="final-score">0</span></p>
+            <button onclick="window.location.reload()">Jugar de Nuevo</button>
+        </div>
+    </div>
+
+    <div id="pause-modal">
+        <div class="modal-content">
+            <h3>Paused</h3>
+            <p>El juego esta pausado. Apreta 'P' o el boton para continuar.</p>
+            <button id="resumeBtn">Resume Game</button>
+        </div>
+    </div>
+
+
+    <script type="module" src="js/pieces.js"></script>
+    <script type="module" src="js/audio.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/controls.js"></script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+:root {
+    --primary-color: #79c0ff;
+    --secondary-color: #58a6ff;
+    --background-dark: #0d1117;
+    --background-light: #161b22;
+    --text-color: #c9d1d9;
+    --glass-background: rgba(43, 62, 102, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-dark);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    background-image: radial-gradient(circle at 50% 120%, var(--secondary-color) 0%, transparent 40%), 
+                      radial-gradient(circle at 50% -20%, var(--primary-color) 0%, transparent 40%),
+                      linear-gradient(to top, #000 0%, #0d1117 100%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+.game-container {
+    display: flex;
+    gap: 3rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 1200px;
+}
+.side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 250px;
+}
+.glass {
+    background: var(--glass-background);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), 
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    transition: transform 0.3s ease;
+}
+.glass:hover {
+    transform: translateY(-5px);
+}
+.board-container {
+    position: relative;
+    width: 320px;
+    height: 640px;
+    overflow: hidden;
+    padding: 0;
+}
+#board {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 2;
+}
+.grid-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.1) 1px, transparent 0);
+    background-size: 32px 32px;
+    z-index: 1;
+}
+.canvas-container {
+    margin-top: 1rem;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.2);
+}
+h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0 0 1rem;
+    color: var(--primary-color);
+    text-shadow: 0 0 8px rgba(121, 192, 255, 0.5);
+}
+.stat {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.stat:last-child {
+    border-bottom: none;
+}
+.stat span:first-child {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+.stat span:last-child {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+.controls-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    padding-top: 1rem;
+}
+.control-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+.key {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.action {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+.button-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 250px;
+    gap: 1.5rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+.btn {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.btn:hover {
+    background: rgba(121, 192, 255, 0.3);
+}
+
+/* Modal de Game Over */
+#game-over-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background: var(--glass-background);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    transform: scale(0.95);
+    animation: bounceIn 0.3s forwards;
+}
+.modal-content h3 {
+    font-size: 2.5rem;
+    color: #ff7b72;
+    margin-bottom: 8px;
+    text-shadow: 0 0 10px #ff7b72;
+}
+.modal-content p {
+    font-size: 1.5rem;
+    margin-bottom: 24px;
+}
+.modal-content button {
+    background-color: var(--primary-color);
+    color: var(--background-dark);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+}
+.modal-content button:hover {
+    background-color: var(--secondary-color);
+}
+
+/* --- Modal de Pausa --- */
+#pause-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+#pause-modal .modal-content {
+    background: var(--glass-background);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    transform: scale(0.95);
+    animation: bounceIn 0.3s forwards;
+}
+
+#pause-modal .modal-content h3 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    text-shadow: 0 0 10px rgba(121, 192, 255, 0.5);
+}
+
+#pause-modal .modal-content p {
+    font-size: 1.5rem;
+    margin-bottom: 24px;
+}
+
+#pause-modal .modal-content button {
+    background-color: var(--primary-color);
+    color: var(--background-dark);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+#pause-modal .modal-content button:hover {
+    background-color: var(--secondary-color);
+}
