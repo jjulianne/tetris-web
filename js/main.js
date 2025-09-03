@@ -444,7 +444,7 @@ class Game {
      * @param {number} points - Los puntos a sumar.
      */
     updateScore(points) {
-        this.score = points; // Reemplazado por asignación directa para los reinicios
+        this.score += points;
         if (this.scoreElement) {
             this.scoreElement.textContent = this.score;
         }
@@ -455,7 +455,7 @@ class Game {
      * @param {number} count - El número de líneas completadas.
      */
     updateLines(count) {
-        this.lines = count; // Reemplazado por asignación directa para los reinicios
+        this.lines += count; // Reemplazado por asignación directa para los reinicios
         if (this.linesElement) {
             this.linesElement.textContent = this.lines;
         }
