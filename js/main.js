@@ -33,6 +33,7 @@ class Game {
         this.heldPiece = null; // La pieza que está en el área de hold.
         this.canHold = true; // Permite o no un nuevo hold.
         this.holdCtx = document.getElementById("hold-piece-canvas").getContext("2d");
+        this.nextCtx = document.getElementById("next-piece-canvas").getContext("2d");
         this.scoreElement = document.getElementById('score');
         this.linesElement = document.getElementById('lines');
         this.pauseModal = document.getElementById('pause-modal');
@@ -61,15 +62,67 @@ class Game {
      * Se le agrega un parámetro para indicar en qué contexto de canvas dibujar.
      * @param {number} x - La coordenada X del bloque.
      * @param {number} y - La coordenada Y del bloque.
-     * @param {string} color - El color del bloque.
+     * @param {string} color - El color base del bloque.
      * @param {object} targetCtx - El contexto del canvas donde se dibujará.
      */
     drawCell(x, y, color, targetCtx = this.ctx) {
-        targetCtx.fillStyle = color;
-        targetCtx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-        targetCtx.strokeStyle = "#111"; // Color del borde de los bloques.
-        targetCtx.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+        // Calculamos las coordenadas exactas del bloque
+        const pixelX = x * BLOCK_SIZE;
+        const pixelY = y * BLOCK_SIZE;
+
+        // Creamos un degradado lineal para el efecto 3D
+        const gradient = targetCtx.createLinearGradient(pixelX, pixelY, pixelX + BLOCK_SIZE, pixelY + BLOCK_SIZE);
+
+        const lightColor = this.shadeColor(color, 20); // 20% mas claro
+        const darkColor = this.shadeColor(color, -20); // 20% mas oscuro
+
+        gradient.addColorStop(0, lightColor); // Color mas claro en la esquina superior izquierda
+        gradient.addColorStop(1, darkColor);  // Color mas oscuro en la esquina inferior derecha
+
+        targetCtx.fillStyle = gradient;
+
+        // Este es el cuerpo principal del bloque
+        targetCtx.fillRect(pixelX, pixelY, BLOCK_SIZE, BLOCK_SIZE);
+
+        // Se aniade un borde/sombra más suave
+        targetCtx.strokeStyle = "rgba(0, 0, 0, 0.3)"; // Borde oscuro y semitransparente
+        targetCtx.lineWidth = 2; // Un borde un poco más grueso
+        targetCtx.strokeRect(pixelX, pixelY, BLOCK_SIZE, BLOCK_SIZE);
+
+        // Se aniade un efecto de brillo en la parte superior
+        // Esto le da un aspecto más "plástico" o "brillante"
+        targetCtx.fillStyle = "rgba(255, 255, 255, 0.2)"; // Blanco semitransparente
+        targetCtx.fillRect(pixelX + 2, pixelY + 2, BLOCK_SIZE - 4, BLOCK_SIZE / 4);
     }
+
+    // Shade sacado de IA 
+    /**
+     * Aclara u oscurece un color hexadecimal.
+     * @param {string} color - El color en formato hexadecimal (ej: '#FF5733').
+     * @param {number} percent - El porcentaje a aclarar/oscurecer (ej: 20 para aclarar, -20 para oscurecer).
+     * @returns {string} El nuevo color hexadecimal.
+     */
+    shadeColor(color, percent) {
+        let f = parseInt(color.slice(1), 16),
+            t = percent < 0 ? 0 : 255,
+            p = percent < 0 ? percent * -1 : percent,
+            R = f >> 16,
+            G = (f >> 8) & 0x00ff,
+            B = f & 0x0000ff;
+
+        return (
+            '#' +
+            (
+                0x1000000 +
+                (Math.round((t - R) * p * 0.01) + R) * 0x10000 +
+                (Math.round((t - G) * p * 0.01) + G) * 0x100 +
+                (Math.round((t - B) * p * 0.01) + B)
+            )
+            .toString(16)
+            .slice(1)
+        );
+    }
+
 
     /**
      * Dibuja una pieza en un canvas específico, con un desplazamiento.
@@ -90,6 +143,19 @@ class Game {
             });
         });
     }
+
+    /**
+     * Dibuja la pieza que saldrá en el próximo turno.
+     * Borra el canvas de "Next" antes de dibujar la nueva pieza.
+     */
+    drawNextPiece() {
+        this.nextCtx.clearRect(0, 0, this.nextCtx.canvas.width, this.nextCtx.canvas.height);
+        if (this.nextPiece) {
+            const offset = { x: 1, y: 1 };
+            this.drawPiece(this.nextPiece, this.nextCtx, offset);
+        }
+    }
+
 
     /**
      * Dibuja la pieza que está guardada en el área de hold.
@@ -380,6 +446,7 @@ class Game {
         this.drawGrid(); // Dibuja las piezas fijadas.
         this.drawPiece(this.currentPiece); // Dibuja la pieza actual.
         this.drawHeldPiece(); // Llama a la nueva función de dibujo.
+        this.drawNextPiece(); // Dibuja la siguiente pieza.
     }
 
     /**
