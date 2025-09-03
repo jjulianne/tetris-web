@@ -34,6 +34,7 @@ class Game {
         this.canHold = true; // Permite o no un nuevo hold.
         this.holdCtx = document.getElementById("hold-piece-canvas").getContext("2d");
         this.nextCtx = document.getElementById("next-piece-canvas").getContext("2d");
+        this.showGhostPiece = true;
         this.scoreElement = document.getElementById('score');
         this.linesElement = document.getElementById('lines');
         this.pauseModal = document.getElementById('pause-modal');
@@ -129,16 +130,24 @@ class Game {
      * @param {object} piece - El objeto de la pieza a dibujar.
      * @param {object} targetCtx - El contexto del canvas donde se dibujará la pieza.
      * @param {object} offset - Un objeto con las coordenadas de desplazamiento {x, y}.
+     * @param {boolean} isGhost - Indica si la pieza es un fantasma.
      */
-    drawPiece(piece, targetCtx = this.ctx, offset = { x: 0, y: 0 }) {
+    drawPiece(piece, targetCtx = this.ctx, offset = { x: 0, y: 0 }, isGhost = false) {
         piece.shape.forEach((row, dy) => {
             row.forEach((value, dx) => {
                 if (value) {
-                    // Si el contexto de destino es el tablero principal, se usan las coordenadas de la pieza.
-                    // Si es otro contexto (como el de hold), solo se usan las coordenadas relativas al offset.
                     const drawX = (targetCtx === this.ctx) ? (piece.x + dx) : dx;
                     const drawY = (targetCtx === this.ctx) ? (piece.y + dy) : dy;
-                    this.drawCell(drawX + offset.x, drawY + offset.y, piece.color, targetCtx);
+                    
+                    if (isGhost) {
+                        // Dibujar solo el borde para la pieza fantasma
+                        targetCtx.strokeStyle = "rgba(255, 255, 255, 0.4)";
+                        targetCtx.lineWidth = 2;
+                        targetCtx.strokeRect((drawX + offset.x) * BLOCK_SIZE, (drawY + offset.y) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                    } else {
+                        // Dibujar la pieza normal con color
+                        this.drawCell(drawX + offset.x, drawY + offset.y, piece.color, targetCtx);
+                    }
                 }
             });
         });
@@ -185,6 +194,27 @@ class Game {
                 }
             });
         });
+    }
+
+    /**
+     * Calcula la posición de la pieza fantasma.
+     * @returns {object} La pieza fantasma con su posición final.
+     */
+    getGhostPiece() {
+        // Crear una copia de la pieza actual
+        const ghostPiece = {
+            ...this.currentPiece,
+            y: this.currentPiece.y,
+            x: this.currentPiece.x
+        };
+
+        // Mover la pieza fantasma hacia abajo hasta que colisione
+        while (!this.collide(ghostPiece)) {
+            ghostPiece.y++;
+        }
+        ghostPiece.y--; // Retroceder un paso para que no esté colisionando
+
+        return ghostPiece;
     }
 
     /**
@@ -372,6 +402,13 @@ class Game {
         }
     }
 
+    /**
+     * Alterna la visibilidad de la pieza fantasma.
+     */
+    toggleGhostPiece() {
+        this.showGhostPiece = !this.showGhostPiece;
+    }
+
 
     /**
      * Reinicia el estado del juego a los valores iniciales.
@@ -444,6 +481,10 @@ class Game {
     draw() {
         this.ctx.clearRect(0, 0, canvas.width, canvas.height); // Borra el canvas.
         this.drawGrid(); // Dibuja las piezas fijadas.
+        if (this.showGhostPiece) {
+            const ghostPiece = this.getGhostPiece();
+            this.drawPiece(ghostPiece, this.ctx, { x: 0, y: 0 }, true);
+        }
         this.drawPiece(this.currentPiece); // Dibuja la pieza actual.
         this.drawHeldPiece(); // Llama a la nueva función de dibujo.
         this.drawNextPiece(); // Dibuja la siguiente pieza.

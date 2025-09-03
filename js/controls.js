@@ -13,7 +13,8 @@ export function initControls(game) {
         "KeyC": () => game.holdPiece(), // hold piece
         "KeyP": () => game.togglePause(), // pausa
         "KeyR": () => game.resetGame(), // reiniciar
-        "KeyM": () => toggleMusic() // encender/apagar música
+        "KeyM": () => toggleMusic(), // encender/apagar música
+        "KeyG": () => game.toggleGhostPiece() // ghost
     };
 
     document.addEventListener("keydown", (event) => {
